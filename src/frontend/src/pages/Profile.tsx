@@ -1,3 +1,4 @@
+import { UserIDCard } from "@/components/UserIDCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -659,6 +660,15 @@ export default function Profile() {
           )}
         </div>
 
+        {/* PVC Membership Card */}
+        {user.accountStatus === "approved" && (
+          <div className="bg-card rounded-xl shadow-xs p-4">
+            <h3 className="font-semibold text-sm text-green-700 mb-3 flex items-center gap-2">
+              <span>🪪</span> Your PVC Membership Card
+            </h3>
+            <UserIDCard user={user} />
+          </div>
+        )}
         {/* Withdrawal */}
         <div className="bg-card rounded-xl shadow-xs overflow-hidden">
           <button

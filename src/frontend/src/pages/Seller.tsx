@@ -1,3 +1,4 @@
+import { SellerCertificate } from "@/components/SellerCertificate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -394,6 +395,22 @@ export default function Seller() {
                 Submit KYC
               </Button>
             </div>
+
+            {user?.kyc === "approved" && (
+              <div className="mt-4">
+                <h3 className="font-semibold text-sm text-green-700 mb-3 flex items-center gap-2">
+                  <span>📜</span> Your Seller Certificate
+                </h3>
+                <SellerCertificate
+                  user={{
+                    name: user.name,
+                    referralCode: user.referralCode,
+                    joinDate: user.joinDate,
+                    kyc: user.kyc,
+                  }}
+                />
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
