@@ -43,6 +43,7 @@ import {
 import { toast } from "sonner";
 import { useNav } from "../App";
 import { useStore } from "../store/useStore";
+import { compressImage } from "../utils/imageCompress";
 
 type AdminTab =
   | "dashboard"
@@ -74,13 +75,20 @@ function ImageUploadField({
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const result = ev.target?.result as string;
-      onChange(result);
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
+    compressImage(file, 400, 0.75)
+      .then((compressed) => {
+        onChange(compressed);
+        setUploading(false);
+      })
+      .catch(() => {
+        // fallback to original
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          onChange(ev.target?.result as string);
+          setUploading(false);
+        };
+        reader.readAsDataURL(file);
+      });
   };
 
   return (

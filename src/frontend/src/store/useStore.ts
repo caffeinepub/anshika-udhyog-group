@@ -102,7 +102,10 @@ interface AppStore {
     type: "add" | "deduct",
   ) => void;
   updateUserRole: (id: string, role: "user" | "seller") => void;
-  addUser: (u: Omit<User, "id" | "referralCode" | "joinDate">) => void;
+  addUser: (
+    u: Omit<User, "id" | "referralCode" | "joinDate"> &
+      Partial<Pick<User, "id" | "referralCode" | "joinDate">>,
+  ) => void;
   deleteUser: (id: string) => void;
   approveKYC: (id: string) => void;
   rejectKYC: (id: string) => void;
@@ -390,17 +393,28 @@ export const useStore = create<AppStore>()(
           users: s.users.map((u) => (u.id === id ? { ...u, role } : u)),
         })),
       addUser: (u) =>
-        set((s) => ({
-          users: [
-            ...s.users,
-            {
-              ...u,
-              id: `u${Date.now()}`,
-              referralCode: `AUG-${Date.now().toString().slice(-4)}`,
-              joinDate: new Date().toISOString().split("T")[0],
-            },
-          ],
-        })),
+        set((s) => {
+          // Prevent duplicate phone signups
+          const exists = s.users.find(
+            (x) => x.phone === u.phone || (u.email && x.email === u.email),
+          );
+          if (exists) return {};
+          return {
+            users: [
+              ...s.users,
+              {
+                accountStatus: "pending" as const,
+                kyc: "pending" as const,
+                walletBalance: 0,
+                ...u,
+                id: u.id || `u${Date.now()}`,
+                referralCode:
+                  u.referralCode || `AUG-${Date.now().toString().slice(-4)}`,
+                joinDate: u.joinDate || new Date().toISOString().split("T")[0],
+              },
+            ],
+          };
+        }),
       deleteUser: (id) =>
         set((s) => ({ users: s.users.filter((u) => u.id !== id) })),
       approveKYC: (id) =>
@@ -545,7 +559,7 @@ export const useStore = create<AppStore>()(
         })),
     }),
     {
-      name: "aug-store",
+      name: "aug-store-v2",
       partialize: (s) => ({
         cart: s.cart,
         wishlist: s.wishlist,

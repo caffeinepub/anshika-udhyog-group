@@ -11,6 +11,8 @@ import { useStore } from "../store/useStore";
 export default function Login() {
   const { navigate } = useNav();
   const login = useStore((s) => s.login);
+  const addUser = useStore((s) => s.addUser);
+  const addWalletFunds = useStore((s) => s.addWalletFunds);
   const siteSettings = useStore((s) => s.siteSettings);
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [showPass, setShowPass] = useState(false);
@@ -85,8 +87,9 @@ export default function Login() {
     }
     setLoading(true);
     setTimeout(() => {
-      const user: User = {
-        id: `u${Date.now()}`,
+      const userId = `u${Date.now()}`;
+      const newUser: User = {
+        id: userId,
         name: form.name,
         email: form.email || `${form.phone}@aug.user`,
         phone: form.phone,
@@ -94,10 +97,16 @@ export default function Login() {
         referredBy: form.referral || undefined,
         role: "user",
         joinDate: new Date().toISOString().split("T")[0],
+        accountStatus: "pending",
+        kyc: "pending",
       };
-      login(user);
+      addUser(newUser);
+      login(newUser);
+      addWalletFunds(500, "Welcome bonus - New registration");
       setLoading(false);
-      toast.success(`Welcome to AUG, ${user.name}! ₹500 welcome bonus added.`);
+      toast.success(
+        `Welcome to AUG, ${newUser.name}! ₹500 welcome bonus added.`,
+      );
       navigate("home");
     }, 1200);
   };

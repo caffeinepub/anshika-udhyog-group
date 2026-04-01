@@ -22,6 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useNav } from "../App";
 import { useStore } from "../store/useStore";
+import { compressImage } from "../utils/imageCompress";
 
 export default function Profile() {
   const { navigate } = useNav();
@@ -132,20 +133,17 @@ export default function Profile() {
     if (!file) return;
     if (type === "idCard") setUploadingId(true);
     else setUploadingCert(true);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const result = ev.target?.result as string;
+    compressImage(file, 400, 0.75).then((compressed) => {
       if (type === "idCard") {
-        updateUser({ idCardUrl: result });
+        updateUser({ idCardUrl: compressed });
         setUploadingId(false);
         toast.success("ID Card uploaded!");
       } else {
-        updateUser({ certificateUrl: result });
+        updateUser({ certificateUrl: compressed });
         setUploadingCert(false);
         toast.success("Certificate uploaded!");
       }
-    };
-    reader.readAsDataURL(file);
+    });
   };
 
   const handleWithdraw = () => {
