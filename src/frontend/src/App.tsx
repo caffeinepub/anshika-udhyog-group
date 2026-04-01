@@ -6,6 +6,7 @@ import AnnouncementBar from "./components/AnnouncementBar";
 import BottomNav from "./components/BottomNav";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import Sidebar from "./components/Sidebar";
 import UpiPaymentModal from "./components/UpiPaymentModal";
 import WhatsAppButton from "./components/WhatsAppButton";
@@ -132,6 +133,7 @@ export default function App() {
                 <Footer />
                 <BottomNav />
                 <WhatsAppButton />
+                <PWAInstallPrompt />
               </>
             )}
           </div>
